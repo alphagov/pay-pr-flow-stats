@@ -20,7 +20,7 @@ class PullRequest
 
     puts "number: #{data.number}"
     puts "head ref: #{data.head.ref}"
-    puts "url: #{data._links.html.href}"
+    puts "url: #{url}"
 
     puts "Work started: #{work_started}"
     if complete?
@@ -31,32 +31,38 @@ class PullRequest
       puts "Not complete: #{state}"
     end
 
-    if build_triggering_events.size==1
-      e = build_triggering_events.first
-      build_start = e.created_at
+    build_start = build_triggering_events.size==1 ? build_triggering_events.first.created_at : nil
+    if build_start
       puts "Build triggered at #{build_start}"
+      time_start_from = build_start
     else
-      build_start = work_started
       puts "Found no triggering events, using work started time of #{work_started} instead"
+      time_start_from = work_started
     end
 
     puts "Status checks:"
+    grouped_statuses = statuses.group_by {|s| s.context}
 
-    table = Terminal::Table.new(headings: ['Check', "Time to pending", "Success", "Fail", "Error"]) do |t|
+
+    table = Terminal::Table.new(headings: ['Check', "URL", "Work start", "Build start", "Closed", "Time to pending", "Success", "Fail", "Error"]) do |t|
       statuses.group_by {|s| s.context}.each do |context, status_check_list|
-
-        (pending, success, failure, error) = %w{pending success failure error}.map do |desired_state|
+        row_data = %w{pending success failure error}.map do |desired_state|
           status_check_list
             .select {|s| s.state == desired_state}
-            .map {|s| TimeFormatter.new(build_start.business_time_until(s.created_at)).to_s }
+            .map {|s| s.created_at }
             .first
         end
 
-        t.add_row [context, pending, success, failure, error]
+        row = [context, url, work_started, build_start, completion_time] + row_data.map {|d| d ? (d - time_start_from).to_s : "" }
+        t.add_row row
       end
     end
 
     puts table
+  end
+
+  def url
+    data._links.html.href
   end
 
   class PushEvent

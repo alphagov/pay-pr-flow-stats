@@ -17,7 +17,9 @@ class FlowCheck
 
   def call(argv)
     prs = github.pull_requests('alphagov/pay-connector', state: 'all')
-    prs.take(20).map {|data| PullRequest.new(data, github) }.each do |pr|
+    prs.take(20)
+      .map {|data| PullRequest.new(data, github) }
+      .each do |pr|
       pr.inspect
 
       puts "\n\n"
