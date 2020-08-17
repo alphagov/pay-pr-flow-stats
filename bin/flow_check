@@ -2,5 +2,29 @@
 
 $LOAD_PATH << File.dirname(__FILE__) + "/../lib/"
 require 'flow_check'
+require 'optparse'
 
-FlowCheck.new(ENV).call(ARGV)
+options = {}
+OptionParser.new do |opts|
+  opts.on('-rREPO', '--repo=REPO', 'the repo the PR belongs to') do |repo|
+    options[:repo_name] = repo
+  end
+  opts.on('-pPR', '--pr=PR', 'the PR number to analyse') do |pr|
+    if !options[:repo_name]
+        STDERR.puts("Must provide a repo name \(--repo\) with a pr number")
+        exit
+    end
+    options[:pr_number] = pr
+  end
+  opts.on('-q', '--quiet', 'quiet output') do |quiet|
+    options[:quiet] = quiet
+  end
+  opts.on('-f', '--filter-manually-triggered', 'filter out builds manually triggered') do |manually_triggered|
+    options[:filter_manually_triggered] = manually_triggered
+  end
+  opts.on('-s', '--send-to-hg', 'send the results to hosted graphite') do |send|
+    options[:send] = send
+  end
+end.parse!
+
+FlowCheck.new(ENV).call(ARGV, options)

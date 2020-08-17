@@ -65,6 +65,29 @@ class PullRequest
     data._links.html.href
   end
 
+  def was_manually_retriggered
+    latest_fail_time = github.statuses(data.head.repo.full_name, data.head.sha)
+      .select {|s| s.description == "Concourse CI build failure"}
+      .map {|s| s.created_at}
+      .first
+
+    latest_commit_time = github.pull_request_commits(data.head.repo.full_name, data.number)
+      .first
+      .commit
+      .committer
+      .date
+
+    return latest_fail_time && latest_fail_time > latest_commit_time
+  end
+
+  def total_elapsed_time
+    last_status_time = github.statuses(data.head.repo.full_name, data.head.sha)
+      .first
+      .created_at
+
+      return last_status_time - data.updated_at
+  end
+
   class PushEvent
     attr_reader :data
 
