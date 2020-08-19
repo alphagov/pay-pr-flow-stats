@@ -26,7 +26,7 @@ class FlowCheck
     prs = github_prs.map {|data| PullRequest.new(data, github) }
 
     if options[:filter_manually_triggered]
-      prs.select{|pr| !pr.was_manually_triggered}
+      prs.select{|pr| !pr.was_manually_retriggered}
     end
 
     if options[:quiet]
