@@ -35,15 +35,17 @@ class FlowCheck
           if pr.data.merged_at
             puts "PR ##{pr.data.number} has been merged -- skipping"
             next
-          end 
+          end
+
           total_elapsed_time = pr.total_elapsed_time
           pr_number = pr.data.number
+          app_name = options[:repo_name].match(/.*\/pay-(.*)/i).captures
 
           if options[:send]
             @hosted_graphite_api_token = fetch_env("HOSTED_GRAPHITE_API_TOKEN")
             @hosted_graphite_account_id = fetch_env("HOSTED_GRAPHITE_ACCOUNT_ID")
             conn = TCPSocket.new "#{@hosted_graphite_account_id}.carbon.hostedgraphite.com", 2003
-            conn.puts "#{@hosted_graphite_api_token}.ci.concourse.pr.#{pr_number}.build_time.success.duration #{total_elapsed_time}\n"
+            conn.puts "#{@hosted_graphite_api_token}.ci.concourse.pr.#{app_name}.#{pr_number}.build_time.success.duration #{total_elapsed_time}\n"
             conn.close
           end
           puts total_elapsed_time
