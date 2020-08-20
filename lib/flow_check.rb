@@ -26,12 +26,16 @@ class FlowCheck
     prs = github_prs.map {|data| PullRequest.new(data, github) }
 
     if options[:filter_manually_triggered]
-      prs.select{|pr| !pr.was_manually_retriggered}
+      prs = prs.select{|pr| !pr.was_manually_retriggered}
     end
 
     if options[:quiet]
       prs
         .each do |pr|
+          if pr.data.merged_at
+            puts "PR ##{pr.data.number} has been merged -- skipping"
+            next
+          end 
           total_elapsed_time = pr.total_elapsed_time
           pr_number = pr.data.number
 
