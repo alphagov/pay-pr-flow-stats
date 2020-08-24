@@ -44,11 +44,13 @@ class FlowCheck
           if options[:send]
             @hosted_graphite_api_token = fetch_env("HOSTED_GRAPHITE_API_TOKEN")
             @hosted_graphite_account_id = fetch_env("HOSTED_GRAPHITE_ACCOUNT_ID")
-            metric_name = "ci.concourse.pr.#{app_name}.#{pr_number}.build_time.success.duration"
-
+            metric_name_repo = "ci.concourse.pr.#{app_name}.build_time.success.duration"
+            metric_name_standard = "ci.concourse.pr.build_time.success.duration"
             conn = TCPSocket.new "#{@hosted_graphite_account_id}.carbon.hostedgraphite.com", 2003
-            conn.puts "#{@hosted_graphite_api_token}.#{metric_name} #{total_elapsed_time}\n"
-            puts "sent #{metric_name} #{total_elapsed_time}"
+            conn.puts "#{@hosted_graphite_api_token}.#{metric_name_repo} #{total_elapsed_time}\n"
+            conn.puts "#{@hosted_graphite_api_token}.#{metric_name_standard} #{total_elapsed_time}\n"
+            puts "sent #{metric_name_repo} #{total_elapsed_time}"
+            puts "sent #{metric_name_standard} #{total_elapsed_time}"
             conn.close
           else
             puts total_elapsed_time
