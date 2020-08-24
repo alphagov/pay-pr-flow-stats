@@ -2,6 +2,10 @@
 
 This is a CLI utility we use on Pay to extract and record a variety of information regarding pull requests raised related to Pay and their build times on Concourse.
 
+The concourse components of this can be found here: 
+
+https://github.com/alphagov/pay-omnibus/blob/master/ci/pipelines/pr.yml#L81
+
 ## Containerisation
 
 In our CI environment we run this inside a container, this is fetchable from Dockerhub with:
