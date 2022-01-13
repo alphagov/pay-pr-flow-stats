@@ -1,4 +1,4 @@
-FROM ruby:2.6-alpine
+FROM ruby:3.1.0-alpine
 
 COPY . /pay-pr-flow-stats
 
