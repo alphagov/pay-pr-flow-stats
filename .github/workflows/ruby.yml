@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
     - name: Set up Ruby
-      uses: ruby/setup-ruby@57d46d78b7d959dc4a248024a29bb17d4e357e5c
+      uses: ruby/setup-ruby@e5517072e87f198d9533967ae13d97c11b604005
       with:
         ruby-version: 2.6
     - name: Install dependencies
