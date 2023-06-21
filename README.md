@@ -1,3 +1,5 @@
+⚠️ As of 2023-06-21 this repository has been archived and is no longer maintained by the Pay team.
+
 # pay_pr_flow_stats
 
 This is a CLI utility we use on Pay to extract and record a variety of information regarding pull requests raised related to Pay and their build times on Concourse.
